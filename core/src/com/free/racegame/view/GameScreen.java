@@ -6,35 +6,43 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.free.racegame.model.Car;
+import com.free.racegame.utils.UI;
 
 public class GameScreen implements Screen {
 
-    private Texture carTexture;
+
     private SpriteBatch batch;
     private Car car;
     private OrthographicCamera camera;
+    private TextureAtlas textureAtlas;
+    private UI ui;
     public static float deltaCff;
 
     @Override
     public void show() {
         batch = new SpriteBatch();
-        carTexture = new Texture(Gdx.files.internal("car.png"));
-        carTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        car = new Car(carTexture, 0, 0, 1f, 1f * 1.97f);
+        car = new Car(textureAtlas.findRegion("0"), 0, 0, 1f, 1f * 1.97f);
+        ui = new UI();
+    }
+
+    public void setTextureAtlas(TextureAtlas textureAtlas) {
+        this.textureAtlas = textureAtlas;
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         deltaCff = delta;
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         car.draw(batch);
         batch.end();
+        ui.draw();
     }
 
     @Override
@@ -60,7 +68,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        carTexture.dispose();
         batch.dispose();
+        ui.dispose();
     }
 }
